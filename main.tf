@@ -91,7 +91,7 @@ resource "aws_lb" "compute_lb" {
   name = "compute-lb"
   load_balancer_type = "application"
   security_groups = [aws_security_group.compute_lb_sg.id]
-  subnets = [for subnet in aws_subnet.pub_subnet : subnet.id] # does this work? 
+  subnets = [for subnet in aws_subnet.pub_subnet : subnet.id] 
 }
 
 resource "aws_lb_target_group" "compute-tg" {
