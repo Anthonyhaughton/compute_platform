@@ -78,6 +78,19 @@ resource "aws_vpc_security_group_ingress_rule" "allow_lb_to_ec2" {
   ip_protocol                  = "tcp"
 }
 
+resource "aws_security_group" "compute_ec2_ssh_sg" {
+  name        = "allow-ssh"
+  description = "allow SSH"
+  vpc_id      = aws_vpc.compute_vpc.id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "compute-ssh" {
+  security_group_id = aws_security_group.compute_ec2_ssh_sg.id
+  from_port         = 22
+  to_port           = 22
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0"
+}
 resource "aws_vpc_security_group_egress_rule" "ec2_egress_rule" {
   security_group_id = aws_security_group.compute_ec2_sg.id
   cidr_ipv4         = "0.0.0.0/0"
@@ -129,7 +142,7 @@ resource "aws_launch_template" "compute_launch_template" {
 
   network_interfaces {
     associate_public_ip_address = false
-    security_groups             = [aws_security_group.compute_ec2_sg.id]
+    security_groups             = [aws_security_group.compute_ec2_sg.id, aws_security_group.compute_ec2_ssh_sg.id]
   }
 }
 
